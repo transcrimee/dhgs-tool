@@ -15,8 +15,7 @@ import sys
 import json
 import hashlib
 from hmac import digest
-
-# I'm currently considering away what a program can remember your name and welcome you when you load it but I'm not 100% sure if I want to add that or not
+# ASCII Art for dhgs-tool 
 big_text = """
 _░▒███████
 ░██▓▒░░▒▓██
@@ -39,6 +38,7 @@ _____░▒▓██
 """
 
 print(big_text)
+# This loads and checked if the uername.json file exists if it does it loads the username if not it creates one
 file_path = "username.json"
 if os.path.exists(file_path):
   with open(file_path, "r") as f:
@@ -47,18 +47,18 @@ if os.path.exists(file_path):
     print(f"Welcome back, {username}!")
 else:
   username = input("Enter your username:")
-  while username == "":
+  while username == "": #Simple check to make sure username is not empty because it just be weird 
     print("It seems that your username was empty please re-enter it!")
     username = input("Enter your username:")
-  with open(file_path, "w") as f:
-    json.dump({"username": username}, f)
+  with open(file_path, "w") as f: # Creates the username.json and ready to writes the username into it 
+    json.dump({"username": username}, f) # Dumps the username into the json file
   print(f"Thanks, {username}! Your username has been saved")
 
 #The reason why I rewrite this part, it was a long statement of print repeatedly, instead of some big mess I thought I would put all together make it look cleaner
 options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Exit"}
 print(options)
 choice = input("╰─▸ ")
-while choice not in ["1", "2", "3", "4", "5"]:
+while choice not in ["1", "2", "3", "4", "5"]: # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
   print("Invalid choice. Please select a valid option.")
   choice = input("╰─▸ ")
 #The reason for adding the condition statement, was to make it look cleaner and generally just smaller
@@ -130,10 +130,10 @@ if "1" in choice:
 if "2" in choice:
  pass_found=0
 
- i_hash = input("Enter the hashed password:")
+ i_hash = input("Enter the hashed password:") # User have to input MD5 hash of the password
  p_doc = input("\nEnter password filename inclvding path:")
 
- p_file = open(p_doc, 'r')
+ p_file = open(p_doc, 'r') # opens the path to the password file and reads it 
 
  for word in p_file:
      enc_word = word.encode('utf-8')
