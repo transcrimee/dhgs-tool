@@ -15,7 +15,6 @@ import sys
 import json
 import hashlib
 from hmac import digest
-import secrets
 # ASCII Art for dhgs-tool 
 big_text = """
 _░▒███████
@@ -59,7 +58,7 @@ else:
 options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Exit"}
 print(options)
 choice = input("╰─▸ ")
-while choice not in ["1", "2", "3", "4", "5", "egg"]: # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
+while choice not in ["1", "2", "3", "4", "5"]: # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
   print("Invalid choice. Please select a valid option.")
   choice = input("╰─▸ ")
 #The reason for adding the condition statement, was to make it look cleaner and generally just smaller
