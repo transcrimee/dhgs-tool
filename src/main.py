@@ -55,10 +55,10 @@ else:
   print(f"Thanks, {username}! Your username has been saved")
 
 #The reason why I rewrite this part, it was a long statement of print repeatedly, instead of some big mess I thought I would put all together make it look cleaner
-options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Exit"}
+options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Change Username", "6.": "Exit"}
 print(options)
 choice = input("╰─▸ ")
-while choice not in ["1", "2", "3", "4", "5"]: # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
+while choice not in ["1", "2", "3", "4", "5", "6"]: # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
   print("Invalid choice. Please select a valid option.")
   choice = input("╰─▸ ")
 #The reason for adding the condition statement, was to make it look cleaner and generally just smaller
@@ -217,9 +217,45 @@ if "4" in choice:
  print("Python version:", sys.version)
 
  print("Platform:", sys.platform)
+
+ file_path = "system_info.json"
+ with open(file_path, "w") as f:
+    system_info = {
+        "system": platform.system(),
+        "machine": platform.machine(),
+        "processor": platform.processor(),
+        "os_version": platform.version(),
+        "python_version": platform.python_version(),
+        "cpu_cores": psutil.cpu_count(logical=False),
+        "logical_cpus": psutil.cpu_count(logical=True),
+        "cpu_usage_percent": psutil.cpu_percent(interval=1),
+        "total_memory_gb": memory.total / (1024 ** 3),
+        "used_memory_gb": memory.used / (1024 ** 3),
+        "free_memory_gb": memory.free / (1024 ** 3),
+        "total_disk_space_gb": disk.total / (1024 ** 3),
+        "used_disk_space_gb": disk.used / (1024 ** 3),
+        "free_disk_space_gb": disk.free / (1024 ** 3),
+        "hostname": hostname,
+        "ip_address": ip_address,
+        "python_executable": sys.executable,
+        "python_version_detail": sys.version,
+        "platform": sys.platform
+    }
+    json.dump(system_info, f, indent=4)
+    print(f"System information saved to {file_path}")
 if "5" in choice:
-    print("Exiting the program. Goodbye!")
+    remove_file = "username.json"
+    if os.path.exists(remove_file):
+      os.remove(remove_file)
+      print("The previous username has been removed please add new one")
+    while username == "": #Simple check to make sure username is not empty because it just be weird 
+     print("It seems that your username was empty please re-enter it!")
+    username = input("Enter your username:")
+    with open(file_path, "w") as f: # Creates the username.json and ready to writes the username into it 
+     json.dump({"username": username}, f) # Dumps the username into the json file
+    print(f"Thanks, {username}! Your username has been saved")
+if "6" in choice:
+    print(f"Exiting the program. Goodbye! {username}")
     sys.exit()
-  
-  
+
 # but this is very early in rework so some things may be changed including comments please be mindful of that and thank you
