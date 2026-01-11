@@ -15,6 +15,7 @@ import sys
 import json
 import hashlib
 from hmac import digest
+from color_lib import color
 # ASCII Art for dhgs-tool 
 big_text = """
 _░▒███████
@@ -38,14 +39,14 @@ _____░▒▓██
 """
 
 def main_menu():
- print(big_text)
+ print(color.rgb_text(255,105,180,big_text))
 # This loads and checked if the uername.json file exists if it does it loads the username if not it creates one
  file_path = "username.json"
  if os.path.exists(file_path):
    with open(file_path, "r") as f:
      data = json.load(f)
      username = data.get("username", "")
-     print(f"Welcome back, {username}!")
+     print(f"Welcome back, {color.rgb_text(255, 105, 180, username)}!")
      
  else:
    username = input("Enter your username:")
@@ -60,17 +61,17 @@ def main_menu():
 
  valid_options = ["1", "2", "3", "4", "5", "6"]
  options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Change Username", "6.": "Exit"}
- print(options)
- choice = input("╰─▸ ")
+ print(color.rgb_text(128,0,128, options))
+ choice = input(color.rgb_text(255,105,180,"╰─▸"))
  while choice not in valid_options:
  # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
    print("Invalid choice. Please select a valid option.")
-   choice = input("╰─▸ ")
+   choice = input(color.rgb_text(255,105,180,"╰─▸ "))
    #The reason for adding the condition statement, was to make it look cleaner and generally just smaller
  if "1" in choice:
   Denial_of_Service_type = {"1.": "UPD", "2.": "TCP", "3.": "HTTP"} 
-  print(Denial_of_Service_type)
-  choice = input("╰─▸")
+  print(color.rgb_text(128,0,128,Denial_of_Service_type))
+  choice = input(color.rgb_text(255,105,180,"╰─▸"))
   if "1" in choice: # UDP is working
    #def udp_flood(target_ip, ipport):
       target_ip = input("put in ip --> ")
@@ -157,11 +158,11 @@ def main_menu():
   hash_password()
  if "3" in choice:
   repository_type = {"1.": "AUR", "2.": "Git", "3.": "Exit"}    
-  print(repository_type)
-  choice = input("╰─▸")
+  print(color.rgb_text(128,0,128,repository_type))
+  choice = input(color.rgb_text(255,105,180,"╰─▸"))
   while choice not in ["1", "2", "3"]:
    print("Invalid choice. Please select a valid option.")
-   choice = input("╰─▸ ")
+   choice = input(color.rgb_text(255,105,180,"╰─▸ "))
   if "1" in choice:
 # repo_url is kind of like a prefix, basically just set the website that it clone, but to be honest I probably could have done better than this idea
     repo_url = "https://aur.archlinux.org"
@@ -262,9 +263,9 @@ def main_menu():
     username = input("Enter your username:")
     with open(file_path, "w") as f: # Creates the username.json and ready to writes the username into it 
      json.dump({"username": username}, f) # Dumps the username into the json file
-    print(f"Thanks, {username}! Your username has been saved")
+    print(f"Thanks, {color.rgb_text(255, 105, 180,username)}! Your username has been saved")
  if "6" in choice:
-    print(f"Exiting the program. Goodbye! {username}")
+    print(f"Exiting the program. Goodbye! {color.rgb_text(255, 105, 180, username)}")
     sys.exit()
 
 # but this is very early in rework so some things may be changed including comments please be mindful of that and thank you
