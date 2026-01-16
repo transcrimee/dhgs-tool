@@ -15,7 +15,8 @@ import sys
 import json
 import hashlib
 from hmac import digest
-from color_lib import color
+from stylelibrary import color
+from stylelibrary import style
 # ASCII Art for dhgs-tool 
 big_text = """
 _░▒███████
@@ -46,7 +47,7 @@ def main_menu():
    with open(file_path, "r") as f:
      data = json.load(f)
      username = data.get("username", "")
-     print(f"Welcome back, {color.rgb_text(255, 105, 180, username)}!")
+     print(f"Welcome back, {style.bold_style(color.rgb_text(255, 105, 180, username))}!")
      
  else:
    username = input("Enter your username:")
@@ -265,7 +266,7 @@ def main_menu():
      json.dump({"username": username}, f) # Dumps the username into the json file
     print(f"Thanks, {color.rgb_text(255, 105, 180,username)}! Your username has been saved")
  if "6" in choice:
-    print(f"Exiting the program. Goodbye! {color.rgb_text(255, 105, 180, username)}")
+    print(f"Exiting the program. Goodbye! {style.bold_style(color.rgb_text(255, 105, 180, username))}")
     sys.exit()
 
 # but this is very early in rework so some things may be changed including comments please be mindful of that and thank you
