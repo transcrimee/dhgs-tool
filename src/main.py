@@ -11,9 +11,10 @@ import socketserver
 import threading
 import requests
 import random
-import sys
+import time
 import json
 import hashlib
+import sys
 from hmac import digest
 from stylelibrary import color
 from stylelibrary import style
@@ -29,18 +30,18 @@ class RepoManager:
     def client(self):
      try:
         while True:
-          print("------------ ATTACK METHODS ------------")
+          print("------------ REPOSITORY ------------")
           for key, value in self.options.items():
             print(f"{key}. {value}")
-          print("------------ ATTACK METHODS ------------")
+          print("------------ REPOSITORY ------------")
           choice = input(color.rgb_text(255,105,180,"╰─▸ "))
     
           while choice not in self.options:
             print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
-            print("------------ ATTACK METHODS ------------")
+            print("------------ REPOSITORY ------------")
             for key, value in self.options.items():
              print(f"{key}. {value}")
-            print("------------ ATTACK METHODS ------------")
+            print("------------ REPOSITORY ------------")
             choice = input(color.rgb_text(255,105,180,"╰─▸ "))
 
           if choice == "1":
@@ -103,7 +104,7 @@ class SessionManager:
     def __init__(self):
        self.file_name = "username.json"
        self.username = self.load_user()
-
+       
     def load_user(self):
      if os.path.exists(self.file_name):
        with open(self.file_name, "r") as f:
@@ -116,12 +117,15 @@ class SessionManager:
           name = input("Enter your username:")  
         with open(self.file_name, "w") as f: # Creates the username.json and ready to writes the username into it 
          json.dump({"username": name}, f) # Dumps the username into the json file
-         print(f"Thanks, {name}! Your username has been saved")
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Thanks, {name}! Your username has been saved")))
          return name
         
-    def change_username():
-       pass
-         
+    def change_username(self):
+     if os.path.exists(self.file_name):
+        os.remove(self.file_name)
+        print(style.bold_style(color.rgb_text(255, 0, 0, "The previous username has been removed please add new one")))
+        self.username = self.load_user()
+        
 class Client:
     
     def __init__(self):
@@ -153,6 +157,17 @@ class Client:
                self.networking.client()
           if choice == "3":
                self.repo.client()
+          if choice == "5":
+               self.user_session.change_username()
+          if choice == "6":
+             print(style.bold_style(color.rgb_text(0, 255, 0, "Exiting Application Safely....")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "1")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "2")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "3")))
+             break        
         except KeyboardInterrupt:
            print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
 
