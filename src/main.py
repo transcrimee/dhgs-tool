@@ -100,6 +100,73 @@ class TrafficGenerator:
 class SecurityToolkit:
     pass
 
+class Systeminfologging:
+   def __init__(self):
+      self.system_path = "system.json"
+      
+   def logging(self):
+        # System info using platform module
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"System: {platform.system()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Machine: {platform.machine()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Processor: {platform.processor()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"OS Version: {platform.version()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Python version: {platform.python_version()}")))
+
+        # CPU info using psutil
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"CPU cores: {psutil.cpu_count(logical=False)}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Logical CPUs: {psutil.cpu_count(logical=True)}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"CPU usage (%): {psutil.cpu_percent(interval=1)}")))
+
+        # Memory info using psutil
+        memory = psutil.virtual_memory()
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Total Memory: {memory.total / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Used Memory: {memory.used / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Free Memory: {memory.free / (1024 ** 3):.2f} GB")))
+
+        # Disk info using psutil
+        disk = psutil.disk_usage('/')
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Total Disk Space: {disk.total / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Used Disk Space: {disk.used / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Free Disk Space: {disk.free / (1024 ** 3):.2f} GB")))
+
+        # Network info using socket
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Hostname: {hostname}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"IP Address: {ip_address}")))
+
+        # Python runtime info using sys
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Python executable: {sys.executable}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Python version: {sys.version}")))
+
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Platform: {sys.platform}")))
+
+        system_info = {
+          "system": platform.system(),
+          "machine": platform.machine(),
+          "processor": platform.processor(),
+          "os_version": platform.version(),
+          "python_version": platform.python_version(),
+          "cpu_cores": psutil.cpu_count(logical=False),
+          "logical_cpus": psutil.cpu_count(logical=True),
+          "cpu_usage_percent": psutil.cpu_percent(interval=1),
+          "total_memory_gb": memory.total / (1024 ** 3),
+          "used_memory_gb": memory.used / (1024 ** 3),
+          "free_memory_gb": memory.free / (1024 ** 3),
+          "total_disk_space_gb": disk.total / (1024 ** 3),
+          "used_disk_space_gb": disk.used / (1024 ** 3),
+          "free_disk_space_gb": disk.free / (1024 ** 3),
+          "hostname": hostname,
+          "ip_address": ip_address,
+          "python_executable": sys.executable,
+          "python_version_detail": sys.version,
+          "platform": sys.platform
+         }
+        with open(self.system_path, "w") as f:
+         json.dump(system_info, f, indent=4)
+         f.close()
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"System information saved to {self.system_path}")))
+
 class SessionManager:
     def __init__(self):
        self.file_name = "username.json"
@@ -132,6 +199,7 @@ class Client:
         self.repo = RepoManager()
         self.networking = TrafficGenerator()
         self.security = SecurityToolkit()
+        self.system_log = Systeminfologging()
         self.user_session = SessionManager()
 
     def client(self):
@@ -157,6 +225,8 @@ class Client:
                self.networking.client()
           if choice == "3":
                self.repo.client()
+          if choice == "4":
+             self.system_log.logging()
           if choice == "5":
                self.user_session.change_username()
           if choice == "6":
