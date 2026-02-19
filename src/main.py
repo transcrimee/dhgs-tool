@@ -25,7 +25,15 @@ class RepoManager:
     def __init__(self):
         self.github_base = "https://github.com"
         self.aur_base = "https://aur.archlinux.org"
-
+        if platform.system() == "Linux":
+         try:
+            # Only call this on Linux to avoid FileNotFoundError on Windows/macOS
+            self.is_arch = platform.freedesktop_os_release().get("ID") == "arch"
+         except (AttributeError, OSError):
+            self.is_arch = False
+        else:
+        # On Windows or macOS, it's definitely not Arch Linux
+         self.is_arch = False
 
     def client(self):
      try:
@@ -34,7 +42,7 @@ class RepoManager:
           for key, value in self.options.items():
             print(f"{key}. {value}")
           print("------------ REPOSITORY ------------")
-          choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+          choice = input("╰─▸ ")
     
           while choice not in self.options:
             print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
@@ -42,7 +50,7 @@ class RepoManager:
             for key, value in self.options.items():
              print(f"{key}. {value}")
             print("------------ REPOSITORY ------------")
-            choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+            choice = input("╰─▸ ")
 
           if choice == "1":
              self.github()
@@ -57,7 +65,18 @@ class RepoManager:
     def github(self):
        pass
     def aur(self):   
-       pass
+      print(style.bold_style(color.rgb_text(255, 165, 0,"Please add a Repository Name to Started the Git Clone")))
+      repository_name = input("╰─▸")
+      if repository_name.endswith(".git"):
+       subprocess.run(["git", "clone", f"{self.aur_base}/" f"{repository_name}"])
+       cd_name_getting = os.path.splitext(repository_name)[0]
+       print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
+       if self.is_arch:
+        subprocess.run(f"cd {cd_name_getting} && ls", shell=True)
+       else:
+          print(style.bold_style(color.rgb_text(255, 0, 0, "You're not on a Arch Linux system")))
+      else:
+         print(style.bold_style(color.rgb_text(255, 0, 0,"Your input is not Container .git at the end")))
 
 class TrafficGenerator:
     options = {"1": "UPD", "2": "TCP", "3": "HTTP", "4": "Exit"}
@@ -68,7 +87,7 @@ class TrafficGenerator:
           for key, value in self.options.items():
             print(f"{key}. {value}")
           print("------------ ATTACK METHODS ------------")
-          choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+          choice = input("╰─▸ ")
           
           while choice not in self.options:
             print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
@@ -76,7 +95,7 @@ class TrafficGenerator:
             for key, value in self.options.items():
              print(f"{key}. {value}")
             print("------------ ATTACK METHODS ------------")
-            choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+            choice = input("╰─▸ ")
           
           if choice == "1":
              self.udp_flood()
@@ -212,7 +231,7 @@ class Client:
           for key, value in options.items():
             print(f"{key}. {value}")
           print("------------ MENU ------------")
-          choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+          choice = input("╰─▸ ")
 
           while choice not in options:
             print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
@@ -220,7 +239,7 @@ class Client:
             for key, value in options.items():
              print(f"{key}. {value}")
             print("------------ MENU ------------")
-            choice = input(color.rgb_text(255,105,180,"╰─▸ "))
+            choice = input("╰─▸ ")
           if choice == "1":
                self.networking.client()
           if choice == "3":
