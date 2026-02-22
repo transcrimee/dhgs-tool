@@ -1,3 +1,6 @@
+# Copyright (c) 2026 Nora Rose
+# Licensed under MIT License
+
 class color:
     @staticmethod
     def rgb_text(r, g, b, text):
@@ -31,4 +34,5 @@ print(style.underline_style( "This is custom bold text"))
 print(style.blinking_style( "This is custom bold text"))
 print(style.invert_style( "This is custom bold text"))
 print(style.strikethrough_style( "This is custom bold text"))
+
 # ------------- testing up here ------------------  
