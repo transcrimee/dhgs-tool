@@ -2,19 +2,22 @@ use std::io::{self, Write};
 use std::process::Command;
 
 fn ui() {
-    loop {
-        println!("1. DDoS");
-        println!("2. Info");
-        println!("3. Exit");
+     // This override prevents the 0xc000013a crash
+    ctrlc::set_handler(move || {
+        println!("\n[Signal] Ctrl+C detected! Exiting cleanly...");
+        std::process::exit(0); 
+    }).expect("Error setting Ctrl-C handler");
 
-        print!("--> ");
+
+    loop {
+        print!("1. DDoS\n2. Info\n3. Exit\n--> ");
         io::stdout().flush().unwrap();
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        let input = input.trim();
-
-        match input {
+        if io::stdin().read_line(&mut input).is_err() {
+            break;
+        }
+        match input.trim() {
             "1" => {
                 let output = Command::new("python")
                     .arg("modules.py")
@@ -38,7 +41,7 @@ fn ui() {
             _ => {
                 println!("Invalid option, please try again.");
             }
-        }
+        }   
     }
 }
 
