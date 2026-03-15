@@ -1,0 +1,312 @@
+:root {
+    /* Deep gaming tones: Dark Grey to Deep Charcoal to Subtle Navy */
+    --bg-gradient: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0f172a, #1a1a1a);
+    --accent: #ed16db; 
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    /* Make the background 4x larger than the screen so we can move it */
+    background: var(--bg-gradient);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+/* The Animation: Moves the "camera" across the giant gradient */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.mod-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Fully responsive grid */
+    gap: 2rem;
+    padding: 4rem;
+}
+
+.mod-card-NEW {
+    position: relative; /* Essential for the layer to sit inside */
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
+    z-index: 1;
+}
+
+/* This is your image layer */
+.mod-card-NEW::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* Fills the whole card */
+    background-image: url("background/livechatpython-readme-header.png");
+    background-size: cover;
+    background-position: center;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.9s ease; /* Here is your 0.9s fade */
+    z-index: -1; /* Keeps image behind your text/content */
+}
+
+.mod-card-NEW:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Reveal the image layer on hover */
+.mod-card-NEW:hover::before {
+    opacity: 1;
+}
+
+
+.mod-card-OLD {
+    position: relative; /* Essential for the layer to sit inside */
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
+    z-index: 1;
+}
+
+/* This is your image layer */
+.mod-card-OLD::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* Fills the whole card */
+    background-image: url("background/dhgs-tool-readme-header.png");
+    background-size: cover;
+    background-position: center;
+    opacity: 0; /* Start hidden */
+    transition: opacity 0.9s ease; /* Here is your 0.9s fade */
+    z-index: -1; /* Keeps image behind your text/content */
+}
+
+.mod-card-OLD:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--accent);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Reveal the image layer on hover */
+.mod-card-OLD:hover::before {
+    opacity: 1;
+}
+
+.card-img {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    
+    
+}
+
+
+
+.blr {
+  background-color: rgba(255, 255, 255, 0); /* Translucent */
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease; /* Smooth hover */
+}
+
+/* 2. Hover Effect: Add the blur */
+.blr:hover {
+  backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0); /* Make it slightly more opaque on hover */
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+}
+
+.card-content { padding: 1.5rem; }
+
+.badge {
+    background: var(--accent);
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.btn-download {
+    display: inline-block;
+    margin-top: 1rem;
+    color: white;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 8px 20px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-download:hover { background: var(--accent); }
+
+.navbar {
+    display: flex;
+    /* Pushes Logo to far left, Links to far right */
+    justify-content: space-between; 
+    align-items: center;
+    
+    width: 100%;
+    padding: 2rem 4rem; /* Adds padding so they don't touch the screen edges */
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    
+    /* Subtle dark gradient for visibility */
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+}
+
+.logo {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 1.8rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    /* The Bloom Glow */
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 
+                 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 40px; /* Space between each link */
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #999;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: 0.4s ease;
+}
+
+.nav-links a:hover {
+    color: #fff;
+    /* Light bloom on links too */
+    text-shadow: 0 0 10px #fff;
+}
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
+    20%, 24%, 55% { text-shadow: none; opacity: 0.5; }
+}
+
+.logo {
+    animation: flicker 5s infinite alternate;
+}
+
+.hero-container {
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: #05050500;
+}
+
+#typing-text {
+    font-family: 'Major Mono Display', monospace;
+    font-size: 3.5rem; /* Larger for impact */
+    color: #fff;
+    letter-spacing: 10px;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    
+    /* The Blinking Cursor */
+    border-right: 4px solid #fff;
+    padding-right: 12px;
+    animation: cursor-blink 0.8s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    from, to { border-color: transparent }
+    50% { border-color: white; }
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 3rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Major Mono Display', monospace;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: 0.4s;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+    text-shadow: 0 0 15px #fff; /* Bloom Effect */
+}
+
+.tab-text {
+font-family: "Blinker", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    
+    text-shadow: 0 0 15px #fff;
+}
+
+.panel {
+    display: none; /* Hide panels by default */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 1.0s ease-out, transform 1.0s ease-out;
+}
+
+
+.panel.active {
+     display: block; /* Use grid to show mod cards */
+    grid-template-columns: repeat(auto-fit, minmax(500px, 5fr));
+    gap: 2rem;
+    
+    align-items: start;
+    text-align: left;
+}
+
+.panel.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.unmute-btn {
+   background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Major Mono Display', monospace;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: 0.4s;
+    border-bottom: 2px solid transparent;
+}
+
+
+
+.unmute-btn.active {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+    text-shadow: 0 0 15px #fff; /* Bloom Effect */
+}
+
